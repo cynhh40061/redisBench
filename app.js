@@ -55,7 +55,7 @@ Aigle.attempt(() => {//非同步 Pormise 處理的套件
         const onceSec = 1;
 
         try {
-            await RedisContext.getRedis().del('RANDOMLIST');//show完刪除list
+            await RedisContext.getRedis().del('RANDOMLIST');//刪除之前的list
             loop = setInterval(async function () {//settimeout
                 await setKeys(RedisContext.getRedis(), 1).catch((err) => { throw err; });//塞
                 await getAndDeleteKeys(RedisContext.getRedis()).catch((err) => { throw err; });//塞完刪除
