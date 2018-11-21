@@ -69,8 +69,7 @@ Aigle.attempt(() => {//非同步 Pormise 處理的套件
                         (e) => console.error(e)
                     );
                 }
-                console.log(diff, '=================', ((diff[0] * NS_PER_SEC + diff[1]) * MS_PER_NS));
-            }, (onceSec * 1000));
+            }, (onceSec * 1000));//來不及完成會有誤差
         } catch (error) {
             console.log(error);
             clearInterval(loop);
