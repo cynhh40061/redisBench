@@ -1,0 +1,20 @@
+{
+  "name": "redis-benchmark",
+  "version": "1.0.0",
+  "description": "測試 Redis-Cluster",
+  "main": "app.js",
+  "author": "thaiwu",
+  "license": "MIT",
+  "scripts": {
+    "start": "./node_modules/.bin/pm2 start app.js -i 12",
+    "stop": "./node_modules/.bin/pm2 kill",
+    "monit": "./node_modules/.bin/pm2 monit"
+  },
+  "dependencies": {
+    "aigle": "^1.12.0",
+    "bignumber.js": "^8.0.1",
+    "ioredis": "^4.2.0",
+    "lodash": "^4.17.11",
+    "pm2": "^3.2.2"
+  }
+}
