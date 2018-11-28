@@ -1113,6 +1113,11 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
+js-combinatorics@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/js-combinatorics/-/js-combinatorics-0.5.4.tgz#c92916b8f8171b64ecd7c4435b72cfabc803c756"
+  integrity sha512-PCqUIKGqv/Kjao1G4GE/Yni6QkCP2nWW3KnxL+8IGWPlP18vQpT8ufGMf4XUAAY8JHEryUCJbf51zG8329ntMg==
+
 js-git@^0.7.8:
   version "0.7.8"
   resolved "https://registry.yarnpkg.com/js-git/-/js-git-0.7.8.tgz#52fa655ab61877d6f1079efc6534b554f31e5444"
