@@ -64,7 +64,7 @@ exports.appendNewFile = (url, data) => {
     });
 }
 
-function exit(str) {
+exit = (str) => {
     if (str) {
         console.error(str);
     }

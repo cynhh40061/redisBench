@@ -1,42 +1,22 @@
 var Combinatorics = require('js-combinatorics');
 
-var fs = require('fs');
-var BaseGameJsonUrl = __dirname + "/BaseGame.json";
-const jsonObj = JSON.parse(fs.readFileSync(BaseGameJsonUrl, function (err, data) {
-    if (err) {
-        console.error(err);
-        exit();
-    }
-    else {
-        return data;
-    }
-}).toString('utf8'));
-const reelObj = jsonObj['Reel'];
-const mappingTableObj = jsonObj['mappingTable'];
-const baseLine = jsonObj['baseLine'];
-
-const reelHighRange = 1000;
-const reelLowRange = 100;
-const reelHighRangeJson = {};
-const reelNomalRangeJson = {};
-const reelLowRangeJson = {};
-
-
-
+const tools = require('../util/tool');
+const reelConsts = require('../constants/reelConstants');
+const urlConstants = require('../constants/urlConstants');
 
 getAllRangrFromReel = () => {
-    var Reel1 = reelObj['Reel1'];
-    var Reel2 = reelObj['Reel2'];
-    var Reel3 = reelObj['Reel3'];
-    var Reel4 = reelObj['Reel4'];
-    var Reel5 = reelObj['Reel5'];
+    // var Reel1 = reelConsts.reelObj['Reel1'];
+    // var Reel2 = reelConsts.reelObj['Reel2'];
+    // var Reel3 = reelConsts.reelObj['Reel3'];
+    // var Reel4 = reelConsts.reelObj['Reel4'];
+    // var Reel5 = reelConsts.reelObj['Reel5'];
 
 
-    // var Reel1 = [0, 1, 2];
-    // var Reel2 = [0, 1, 2];
-    // var Reel3 = [0, 1, 2];
-    // var Reel4 = [0, 1, 2];
-    // var Reel5 = [0, 1, 2];
+    var Reel1 = [0, 1, 2];
+    var Reel2 = [0, 1, 2];
+    var Reel3 = [0, 1, 2];
+    var Reel4 = [0, 1, 2];
+    var Reel5 = [0, 1, 2];
 
 
     var cou = 0;
@@ -60,7 +40,7 @@ getReelNum = (arr) => {
     var obj = {};
 
     for (let i = 1; i <= arr.length; i++) {
-        subReel = reelObj['Reel' + i];
+        subReel = reelConsts.reelObj['Reel' + i];
         if (arr[i] == 0) {
             obj['Reel' + i] = [subReel[subReel.length - 1], subReel[0], subReel[1]];
         } else if (arr[i] == subReel.length - 1) {
@@ -100,19 +80,19 @@ checkReelRate = (arr, str) => {
             }
         }
 
-        var thisBaseLine = (baseLine[Reel1[i]][rCombo]) == undefined ? 0 : (baseLine[Reel1[i]][rCombo]);
+        var thisBaseLine = (reelConsts.baseLine[Reel1[i]][rCombo]) == undefined ? 0 : (reelConsts.baseLine[Reel1[i]][rCombo]);
         var totalLine = thisBaseLine * rCount
-        if (totalLine > reelHighRange) {
-            // reelHighRangeJson[str] = { 'winCombo': rCombo, 'winCount': rCount, 'winBaseLine': baseLine[Reel1[i]][rCombo] };
-        } else if (reelLowRange <= totalLine && totalLine <= reelHighRange) {
-            // reelNomalRangeJson[str] = { 'winCombo': rCombo, 'winCount': rCount, 'winBaseLine': baseLine[Reel1[i]][rCombo] };
+        if (totalLine > reelConsts.reelHighRange) {
+            reelHighRangeJson[str] = { 'winCombo': rCombo, 'winCount': rCount, 'winBaseLine': reelConsts.baseLine[Reel1[i]][rCombo] };
+        } else if (reelConsts.reelLowRange <= totalLine && totalLine <= reelConsts.reelHighRange) {
+            // reelNomalRangeJson[str] = { 'winCombo': rCombo, 'winCount': rCount, 'winBaseLine': reelConsts.baseLine[Reel1[i]][rCombo] };
         } else {
-            // reelLowRangeJson[str] = { 'winCombo': rCombo, 'winCount': rCount, 'winBaseLine': baseLine[Reel1[i]][rCombo] };
+            // reelLowRangeJson[str] = { 'winCombo': rCombo, 'winCount': rCount, 'winBaseLine': reelConsts.baseLine[Reel1[i]][rCombo] };
         }
     }
 }
 
-getAllRangrFromReel();
+// getAllRangrFromReel();
 // console.log(reelHighRangeJson);
 
 

@@ -43,5 +43,5 @@ test = (runTimes, Num) => {
 }
 
 for (var i = 0; i < Object.keys(reelConsts.reelAllNumObj).length; i++) {
-    test(10000, i);
+    test(1000000, i);
 }
