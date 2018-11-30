@@ -1,5 +1,5 @@
 var fs = require('fs');
-var log = require('./consoleLog');
+var log = require('../util/consoleLog');
 
 log.isShowLog(false);
 

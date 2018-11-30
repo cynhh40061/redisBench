@@ -1,54 +1,13 @@
-var fs = require('fs');
-const BaseGameJsonUrl = __dirname + "/BaseGame.json";
-const ReelAllNumJsonUrl = __dirname + "/ReelRangeJson/ReelAllNum.json";
-const ReelHighRangeNumJsonUrl = __dirname + "/ReelRangeJson/ReelHighRangeNum.json";
-const ReelNomalRangeNumJsonUrl = __dirname + "/ReelRangeJson/ReelNomalRangeNum.json";
-const ReelLowRangeNumJsonUrl = __dirname + "/ReelRangeJson/ReelLowRangeNum.json";
-
-const jsonObj = JSON.parse(fs.readFileSync(BaseGameJsonUrl, function (err, data) {
-    if (err) {
-        console.error(err);
-        exit();
-    }
-    else {
-        return data;
-    }
-}).toString('utf8'));
-
-const reelAllNumObj = JSON.parse(fs.readFileSync(ReelAllNumJsonUrl, function (err, data) {
-    if (err) {
-        console.error(err);
-        exit();
-    }
-    else {
-        ReelRangeJson
-        return data;
-    }
-}).toString('utf8'));
-
-const reelHighRangeNumObj = JSON.parse(fs.readFileSync(ReelHighRangeNumJsonUrl, function (err, data) {
-    if (err) {
-        console.error(err);
-        exit();
-    }
-    else {
-        return data;
-    }
-}).toString('utf8'));
-
-const reelObj = jsonObj['Reel'];
-const mappingTableObj = jsonObj['mappingTable'];
-const baseLine = jsonObj['baseLine'];
-
-const reelHighRange = 1000;
-const reelLowRange = 100;
+const tools = require('../util/tool');
+const reelConsts = require('../constants/reelConstants');
+const urlConstants = require('../constants/urlConstants');
 
 getReelRandom = () => {
     var obj = {};
     var rArray = [];
 
-    for (let i = 1; i <= Object.keys(reelObj).length; i++) {
-        subReel = reelObj['Reel' + i];
+    for (let i = 1; i <= Object.keys(reelConsts.reelObj).length; i++) {
+        subReel = reelConsts.reelObj['Reel' + i];
         var randomNum = parseInt(Math.random() * subReel.length);
 
         if (randomNum == 0) {
@@ -62,46 +21,9 @@ getReelRandom = () => {
         rArray.push(randomNum);
     }
 
-    obj['randomNum'] = ''.concat(rArray[0], '|', rArray[1], '|', rArray[2], '|', rArray[3], '|', rArray[4]);
+    var reelRandomForKey = ''.concat(rArray[0], '|', rArray[1], '|', rArray[2], '|', rArray[3], '|', rArray[4]);
+    reelConsts.reelAllJson[reelRandomForKey] = '';
 
-    return obj;
-}
-
-checkReelRate = (reelSampling) => {
-    var Reel1 = reelSampling['Reel1'];
-    var rCount = 1;
-    var rCombo = 0;
-    var obj = {};
-
-    for (var i = 0; i < Reel1.length; i++) {
-        rCount = 1;
-        rCombo = 0;
-        for (var j = 0; j < Object.keys(reelSampling).length; j++) {
-            var key = Object.keys(reelSampling)[j];
-            // console.log(key);
-            var count = 0;
-            if (key != 'randomNum') {
-                for (var k = 0; k < Reel1.length; k++) {
-                    if (Reel1[i] == reelSampling[key][k] || 50 == reelSampling[key][k]) {
-                        count++;
-                    }
-                }
-                if (count != 0) {
-                    rCount = rCount * count;
-                    rCombo++;
-                }
-                else {
-                    break;
-                }
-            }
-        }
-        if (rCombo >= 3) {
-            obj[Reel1[i]] = { 'winCombo': rCombo, 'winCount': rCount, 'winBaseLine': baseLine[Reel1[i]][rCombo] };
-        }
-    }
-
-    // console.log(reelSampling);
-    // console.log(obj);
     return obj;
 }
 
@@ -120,14 +42,10 @@ test = (runTimes) => {
         20: { threeCombo: 0, threeComboBonus: 0, fourCombo: 0, fourComboBonus: 0, fivesCombo: 0, fivesComboBonus: 0, winBonus: 0 },
         // 50: { threeCombo: 0, threeComboBonus: 0, fourCombo: 0, fourComboBonus: 0, fivesCombo: 0, fivesComboBonus: 0, winBonus: 0 },
         totalWinBonus: 0,
-        reelHighRangeJson: {},
-        reelNomalRangeJson: {},
-        reelLowRangeJson: {},
-        reelAllJson: {}
     };
     for (var i = 1; i <= runTimes; i++) {
         var reelSampling = getReelRandom();
-        var winObj = checkReelRate(reelSampling);
+        var winObj = tools.checkReelRate(reelSampling);
         for (var j = 0; j < Object.keys(winObj).length; j++) {
             var key = Object.keys(winObj)[j];
             if (winObj[key]['winCombo'] == 3) {
@@ -145,15 +63,15 @@ test = (runTimes) => {
             totalObj[key]['winBonus'] = totalObj[key]['winBonus'] + totalLine;
             totalObj['totalWinBonus'] = totalObj['totalWinBonus'] + totalLine;
 
-            // if (totalLine > reelHighRange) {
-            //     totalObj['reelHighRangeJson'][reelSampling['randomNum']] = '';
-            // } else if (reelLowRange <= totalLine && totalLine <= reelHighRange) {
-            //     totalObj['reelNomalRangeJson'][reelSampling['randomNum']] = '';
-            // } else if (totalLine < reelLowRange) {
-            //     totalObj['reelLowRangeJson'][reelSampling['randomNum']] = '';
-            // }
+            var reelAllJsonKey = Object.keys(reelConsts.reelAllJson);
+            if (totalLine > reelConsts.reelHighRange) {
+                reelConsts.reelHighRangeJson[reelAllJsonKey[reelAllJsonKey.length - 1]] = '';
+            } else if (reelConsts.reelLowRange <= totalLine && totalLine <= reelConsts.reelHighRange) {
+                reelConsts.reelNomalRangeJson[reelAllJsonKey[reelAllJsonKey.length - 1]] = '';
+            } else if (totalLine < reelConsts.reelLowRange) {
+                reelConsts.reelLowRangeJson[reelAllJsonKey[reelAllJsonKey.length - 1]] = '';
+            }
         }
-         totalObj['reelAllJson'][reelSampling['randomNum']] = '';
     }
 
     infoOutput(runTimes, totalObj);
@@ -163,7 +81,7 @@ infoOutput = (times, obj) => {
     var str = "";
     str += "測試次數： " + times + "\n";
     for (let k in obj) {
-        if (k !== "totalWinBonus" && k != 'reelHighRangeJson' && k != 'reelNomalRangeJson' && k != 'reelLowRangeJson' && k != 'reelAllJson') {
+        if (k !== "totalWinBonus") {
             str += "--------------------------------------------------------------- \n";
             str += "中獎號： " + k + "\n";
             str += "三條線中獎次數： " + obj[k]["threeCombo"] + "\n";
@@ -184,37 +102,22 @@ infoOutput = (times, obj) => {
     str += "--------------------------------------------------------------- \n";
 
     var RTPs = Math.floor((obj["totalWinBonus"] / (times * 88)) * 10000) / 10000;
-    reelAllNumObj[RTPs] = getReelKeyArray(obj["reelAllJson"]);
-    writeReelObj(JSON.stringify(reelAllNumObj), ReelAllNumJsonUrl);
-    getRTPKey(reelAllNumObj);
+    reelConsts.reelAllNumObj[RTPs] = getReelKeyArray(reelConsts.reelAllJson);
+    tools.writeFile(urlConstants.ReelAllNumJsonUrl, JSON.stringify(reelConsts.reelAllNumObj));
+    getRTPKey(reelConsts.reelAllNumObj);
 
-    reelHighRangeNumObj[RTPs] = getReelKeyArray(obj["reelHighRangeJson"]);
-    // writeReelObj(JSON.stringify(reelHighRangeNumObj), ReelHighRangeNumJsonUrl);
-    getRTPKey(reelHighRangeNumObj);
+    reelConsts.reelHighRangeNumObj[RTPs] = getReelKeyArray(reelConsts.reelHighRangeJson);
+    tools.writeFile(urlConstants.ReelHighRangeNumJsonUrl, JSON.stringify(reelConsts.reelHighRangeNumObj));
+    getRTPKey(reelConsts.reelHighRangeNumObj);
 
-    // appendNewFile(__dirname + '/TestFile/Test_測試數' + times + '_' + new Date().getTime() + '.txt', str);
+    tools.appendNewFile(__dirname + '/TestFile/Test_測試數' + times + '_' + new Date().getTime() + '.txt', str);
     console.log(RTPs);
 }
 
-isNull = (val) => {
-    if (val == undefined || val == null) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-isVal = (val) => {
-    if (val == undefined || val == null) {
-        return null;
-    } else {
-        return val;
-    }
-}
-
 getReelKeyArray = (obj) => {
+
     var arr = [];
-    if (isNull(obj)) {
+    if (tools.isNull(obj)) {
         for (var i = 0; i < Object.keys(obj).length; i++) {
             arr.push(Object.keys(obj)[i]);
         }
@@ -222,25 +125,6 @@ getReelKeyArray = (obj) => {
         arr = [];
     }
     return arr;
-}
-
-writeReelObj = async (data, url) => {
-    await fs.writeFile(url, data, "UTF8", function (err) {
-        if (err) throw err;
-        console.log("檔案寫入操作完成!");
-    })
-    console.log("檔案寫入操作中 ... ");
-}
-
-appendNewFile = (url, data) => {
-    fs.appendFile(url, data, function (err) {
-        if (err) {
-            console.error(err);
-        }
-        else {
-            console.log('done!');
-        }
-    });
 }
 
 getRTPKey = (json) => {
